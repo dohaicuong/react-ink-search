@@ -1,12 +1,21 @@
 import React, { Component } from 'react'
 import { render, Box } from 'ink'
-import QueryPage from './QueryPage'
-import LoadingPage from './LoadingPage'
-import ResultPage from './ResultPage'
+import {
+  FlashScreen,
+  QueryPage,
+  LoadingPage,
+  ResultPage
+} from './pages/'
+import {
+  FLASH_SCREEN,
+  QUERY_PAGE,
+  LOADING_PAGE,
+  RESULT_PAGE
+} from './states'
 
 class SearchQuery extends Component {
   state = {
-    state: 'QUERY_PAGE',
+    state: FLASH_SCREEN,
 
     query: '',
     content: ''
@@ -16,17 +25,20 @@ class SearchQuery extends Component {
     const { state } = this.state
 
     return (
-      <Box height={6} flexDirection='column'>
-        {state === 'QUERY_PAGE' && (
+      <Box flexDirection='column'>
+        {state === FLASH_SCREEN && (
+          <FlashScreen submitFlash={this.flash} />  
+        )}
+        {state === QUERY_PAGE && (
           <QueryPage submitSearch={this.search} />  
         )}
-        {state === 'LOADING_PAGE' && (
+        {state === LOADING_PAGE && (
           <LoadingPage
             query={this.state.query}
             submitFound={this.found}
           />
         )}
-        {state === 'RESULT_PAGE' && (
+        {state === RESULT_PAGE && (
           <ResultPage
             query={this.state.query}
             content={this.state.content}
@@ -36,27 +48,13 @@ class SearchQuery extends Component {
     )
   }
 
+  flash = () => this.setState({ state: QUERY_PAGE })
   search = query => {
-    this.setState({
-      query,
-      state: 'LOADING_PAGE'
-    })
+    this.setState({ query, state: LOADING_PAGE })
   }
   found = content => {
-    this.setState({
-      content,
-      state: 'RESULT_PAGE'
-    })
+    this.setState({ content, state: RESULT_PAGE })
   }
 } 
 
 render(<SearchQuery />)
-
-/*
-  const state = {
-  QUERY_PAGE: 'QUERY_PAGE',
-  LOADING_PAGE: 'LOADING_PAGE',
-  RESULT_PAGE: 'RESULT_PAGE',
-}
-
-*/
